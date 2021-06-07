@@ -39,11 +39,11 @@ const handleErrors = (err) => {
 }
 
 module.exports.signup_get = (req, res) => {
-    res.render('signup');
+    res.render('signup', { title: 'Sign in' });
 }
 
 module.exports.login_get = (req, res) => {
-    res.render('login');
+    res.render('login', { title: 'Login' });
 }
 
 module.exports.signup_post = async (req, res) => {

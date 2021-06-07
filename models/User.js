@@ -17,6 +17,20 @@ const userSchema = new mongoose.Schema ({
     }
 });
 
+// Mongoose Hooks 
+/* Fire a function AFTER the docs are saved = 'save' into the db */
+/* After fire the doc, next() to move on to the next middleware */ 
+userSchema.post('save', function(doc, next) {
+    console.log('New user was created & saved', doc);
+    next();
+})
+
+/* Fire a function BEFORE the docs are saved = 'save' into the db */
+userSchema.pre('save', function(next) {
+    console.log('User is about to be created & saved', this);
+    next();
+})
+
 const User = mongoose.model('user', userSchema); /* First argument must be a prural of the mongo collection */
 
 module.exports = User;

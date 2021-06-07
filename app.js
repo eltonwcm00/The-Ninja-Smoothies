@@ -20,7 +20,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCr
   .catch((err) => console.log(err));
 
 // Routes
-app.get('/', (req, res) => res.render('home'));
-app.get('/smoothies', (req, res) => res.render('smoothies'));
+app.get('/', (req, res) => res.render('home', { title: 'Home' }));
+app.get('/smoothies', (req, res) => res.render('smoothies', { title: 'Smoothies' }));
 
 app.use(authRoutes);
