@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema ({
     email: {
@@ -21,13 +22,18 @@ const userSchema = new mongoose.Schema ({
 /* Fire a function AFTER the docs are saved = 'save' into the db */
 /* After fire the doc, next() to move on to the next middleware */ 
 userSchema.post('save', function(doc, next) {
-    console.log('New user was created & saved', doc);
+    // console.log('New user was created & saved', doc);
     next();
 })
 
 /* Fire a function BEFORE the docs are saved = 'save' into the db */
-userSchema.pre('save', function(next) {
-    console.log('User is about to be created & saved', this);
+userSchema.pre('save', async function(next) {
+    // console.log('User is about to be created & saved', this);
+
+    // Hashing passwords
+    /* Generating salts and password hashing  */
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
     next();
 })
 
