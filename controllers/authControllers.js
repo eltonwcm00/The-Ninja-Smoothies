@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 // Custom error handler
 const handleErrors = (err) => {
@@ -38,6 +39,14 @@ const handleErrors = (err) => {
     return errors;
 }
 
+// Create JWT
+const JWTmaxAge = 3 * 24 * 60 * 60;
+const createToken = (id) => { /* id = from mongodb auto id assignment */
+    return jwt.sign({id}, 'net ninja secret', { /* {payload}, 'secret' */
+      expiresIn: JWTmaxAge
+    });
+}
+
 module.exports.signup_get = (req, res) => {
     res.render('signup', { title: 'Sign in' });
 }
@@ -54,8 +63,12 @@ module.exports.signup_post = async (req, res) => {
     try {
         // Asynchronous & Await method to resolve the Promises 
         const user = await User.create({ email, password });
-        res.status(201).json(user); /* Send to the db as in a json format */
-    
+        // Assign JWT and parse into Cookie
+        const token = createToken(user._id);
+        res.cookie('jwt', token, {httpOnly: true, maxAge: JWTmaxAge * 1000});
+        
+        res.status(201).json({user: user._id}); /* Send to the db as in a json format */  
+
     } catch (err) {
         const errors = handleErrors(err);
         res.status(400).json( {errors} );
