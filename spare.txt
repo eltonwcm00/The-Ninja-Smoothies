@@ -1,0 +1,4 @@
+app.get('/set-cookies', (req, res) => {
+  res.setHeader('Set-Cookie', 'newUser=true') /* (name)=true */
+  res.send('You got the cookie !');
+});

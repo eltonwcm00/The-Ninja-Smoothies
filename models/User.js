@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema ({
 /* Fire a function AFTER the docs are saved = 'save' into the db */
 /* After fire the doc, next() to move on to the next middleware */ 
 userSchema.post('save', function(doc, next) {
-    // console.log('New user was created & saved', doc);
+     console.log('New user was created & saved', doc);
     next();
 })
 
