@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema ({
 /* Fire a function AFTER the docs are saved = 'save' into the db */
 /* After fire the doc, next() to move on to the next middleware */ 
 userSchema.post('save', function(doc, next) {
-     console.log('New user was created & saved', doc);
+    console.log('New user was created & saved', doc);
     next();
 })
 
@@ -36,6 +36,25 @@ userSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, salt);
     next();
 })
+
+// Static method for user login, called 'login'
+userSchema.statics.login = async function(email, password) {
+    
+    const user = await this.findOne({email: email});
+    
+    // Compare with hashed password
+    if(user) {
+        const auth = await bcrypt.compare(password, user.password);
+
+        if(auth) {
+            return user;
+        } 
+
+        throw Error('Incorrect password');
+    }
+
+    throw Error('Incorrect email');
+}
 
 const User = mongoose.model('user', userSchema); /* First argument must be a prural of the mongo collection */
 

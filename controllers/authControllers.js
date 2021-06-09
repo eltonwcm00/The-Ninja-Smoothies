@@ -63,11 +63,12 @@ module.exports.signup_post = async (req, res) => {
     try {
         // Asynchronous & Await method to resolve the Promises 
         const user = await User.create({ email, password });
-        // Assign JWT and parse into Cookie
+        
+        // Assign JWT and parse into Cookie -> bind to user_.id
         const token = createToken(user._id);
         res.cookie('jwt', token, {httpOnly: true, maxAge: JWTmaxAge * 1000});
         
-        res.status(201).json({user: user._id}); /* Send to the db as in a json format */  
+        res.status(201).json({user: user._id}); /* Send JSON responses to the db as in a json format */  
 
     } catch (err) {
         const errors = handleErrors(err);
@@ -80,7 +81,16 @@ module.exports.signup_post = async (req, res) => {
 module.exports.login_post = async (req, res) => {
     
     const { email, password } = req.body;
-    
-    console.log(email, password);
-    res.send('User login');
+
+    try {
+
+        // Custom static method, from User.js
+        const user = await User.login(email, password);
+        res.status(200).json({user: user._id});
+
+    } catch(err) {
+
+        res.status(400).json({});
+
+    }
 }

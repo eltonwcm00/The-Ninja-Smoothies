@@ -43,11 +43,11 @@
                headers:{ 'Content-Type': 'application/json' }
            });
 
-           // Show errors message in front-end
+           // Console.log() info in dev tools
            const data = await res.json();
-
            console.log(data);
 
+           // Show errors message in front-end
            if(data.errors) {
                 emailError.textContent = data.errors.email;
                 passwordError.textContent = data.errors.password;

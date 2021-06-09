@@ -18,17 +18,48 @@
 
 <script>
     const form = document.querySelector('form');
+    const emailError = document.querySelector('.email.error');
+    const passwordError = document.querySelector('.password.error');
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         
-        /* Prevent the page from refresh upon the form submission */
         e.preventDefault(); 
+
+        // Reset errors
+        emailError.textContent = '';
+        passwordError.textContent = '';
 
         /* Extract the value */
         const email = form.email.value;
         const password = form.password.value;
 
-        console.log(email, password);
+        // Submit form data to the server
+        try {
+
+            const res = await fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify({ email: email, password: password }),
+                headers:{ 'Content-Type': 'application/json' }
+            });
+
+             // Console.log() info in dev tools
+            const data = await res.json();
+            console.log(data);
+
+            // Show errors message in front-end
+            if(data.errors) {
+                    emailError.textContent = data.errors.email;
+                    passwordError.textContent = data.errors.password;
+            }
+
+            // Redirect user back to homepage if detect data.user (successfully)
+            if(data.user) {
+                // location.assign('/'); 
+            }
+
+        } catch(err) {
+            console.log(err);
+        }
          
     })
 </script>
