@@ -6,7 +6,7 @@ const handleErrors = (err) => {
     
      /* Validation errors 
        when it matches sentence 'user validation failed
-       message */
+       message : user validation failed: email: Please...., password: Please....*/
        
     /* Taken from the err.message in the format of :
        {
@@ -22,13 +22,22 @@ const handleErrors = (err) => {
     console.log(err.message, err.code);
     let errors = { email: '', password: ''}; /* '', empty at the beginning to assign error messages */
 
+    // Incorrect login credentials
+    if(err.message === 'Incorrect email') {
+        errors.email = 'That email is not registered';
+    }
+
+    if(err.message === 'Incorrect password') {
+        errors.password = 'That pasword is incorrect';
+    }    
+
     // Duplicate error code
     if (err.code === 11000) {
         errors.email = 'That email is already registered';
         return errors;
     }
 
-    // Validate errors
+    // Validate and return errors
     if (err.message.includes('user validation failed')) {
         Object.values(err.errors).forEach(( {properties} ) => {
             // console.log(error.properties);
@@ -64,7 +73,7 @@ module.exports.signup_post = async (req, res) => {
         // Asynchronous & Await method to resolve the Promises 
         const user = await User.create({ email, password });
         
-        // Assign JWT and parse into Cookie -> bind to user_.id
+        // Create a JWT and parse into Cookie -> bind to user_.id
         const token = createToken(user._id);
         res.cookie('jwt', token, {httpOnly: true, maxAge: JWTmaxAge * 1000});
         
@@ -86,11 +95,16 @@ module.exports.login_post = async (req, res) => {
 
         // Custom static method, from User.js
         const user = await User.login(email, password);
+
+        const token = createToken(user._id);
+        res.cookie('jwt', token, {httpOnly: true, maxAge: JWTmaxAge * 1000});
+
         res.status(200).json({user: user._id});
 
     } catch(err) {
+        const errors = handleErrors(err);
 
-        res.status(400).json({});
+        res.status(400).json({errors});
 
     }
 }
