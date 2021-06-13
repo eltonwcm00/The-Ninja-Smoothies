@@ -23,7 +23,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCr
   .catch((err) => console.log(err));
 
 // Routes *requireAuth = protecting routes
-app.get('/', requireAuth, (req, res) => res.render('home', { title: 'Home' }));
+app.get('/', (req, res) => res.render('home', { title: 'Home' }));
 app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies', { title: 'Smoothies' }));
 
 app.use(authRoutes);
